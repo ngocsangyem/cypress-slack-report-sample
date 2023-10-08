@@ -2,7 +2,7 @@ name: End-to-end tests
 on: [push, workflow_dispatch]
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -28,7 +28,7 @@ jobs:
     name: "Notify failure tests to slack"
     needs: [cypress-run]
     if: ${{ failure() }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Find PR
         uses: jwalton/gh-find-current-pr@v1
@@ -48,14 +48,17 @@ jobs:
         run: |
           message="Cypress tests failed in branch ${{ github.head_ref || github.ref_name }}"
           if [[ -n "${{ steps.findPr.outputs.number }}" ]]; then
-            message="$message. Check out <https://github.com/${{ github.repository }}/pull/${{ steps.findPr.outputs.number }} | PR>"
+            pr_link="<${{ github.server_url }}/${{ github.repository }}/pull/${{ steps.findPr.outputs.number }}| pull request>"
+            action_link="<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}| action link>"
+            message="$message. Check out your $pr_link and $action_link here."
           fi
           echo "message=$message" >> $GITHUB_ENV
 
       - name: Upload screenshots to Slack
-        uses: trymbill/cypress-slack-video-upload-action@v1.3.0
+        uses: ngocsangyem/cypress-notify@0.0.1
         with:
-          token: ${{ secrets.CYPRESS_E2E_APP_SLACK_KE }}
+          token: ${{ secrets.CYPRESS_E2E_APP_SLACK_KEY }}
           channels: 'testing-cypress-capture'
-          message-text: ${{ env.message }}
+          # message-text: ${{ env.message }}
           workdir: cypress/screenshots
+            
