@@ -1,5 +1,17 @@
 name: End-to-end tests
-on: [push, workflow_dispatch, opened]
+on:
+  pull_request:
+    branches:
+      - 'main'
+      - 'test/*'
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+  push:
+    branches:
+      - 'main'
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
