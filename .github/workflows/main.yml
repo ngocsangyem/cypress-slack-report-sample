@@ -67,7 +67,7 @@ jobs:
           echo "message=$message" >> $GITHUB_ENV
 
       - name: Upload screenshots to Slack
-        uses: ngocsangyem/cypress-notify@v1.1.6
+        uses: ngocsangyem/cypress-notify@v1.1.11
         with:
           token: ${{ secrets.CYPRESS_E2E_APP_SLACK_KEY }}
           channels: 'testing-cypress-capture'
